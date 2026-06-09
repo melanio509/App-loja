@@ -1,0 +1,1 @@
+# Pasta com as Saídas da aplicação testada. Não apagar.

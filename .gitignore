@@ -1,0 +1,27 @@
+**/*.class
+**/*.err
+**/*.myout
+**/*.stdout
+
+# Maven
+target/
+**/target/
+
+# IntelliJ IDEA
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/shelf/
+.idea/httpRequests/
+
+# Compilação
+out/
+*.class
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Ficheiros temporários
+*.log
+*.tmp
+*.dat
