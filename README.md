@@ -132,7 +132,7 @@
 
 # 1. Introdução
 
-## 1.1 Enquadramento
+## 1.1 Enquadramento  
 
 O objetivo deste projeto é desenvolver uma aplicação de consola em Java para gerir uma pequena loja.
 
