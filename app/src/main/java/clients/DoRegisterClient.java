@@ -29,7 +29,6 @@ public class DoRegisterClient extends Comando<StoreManager> {
      */
     @Override
     public void executar() throws DialogException {
-        //TODO: A implementar pelos alunos
         String name = Prompt.clientName();
         String nif = Prompt.clientNif();
         LocalDate birthDate = Prompt.clientBirthDate();

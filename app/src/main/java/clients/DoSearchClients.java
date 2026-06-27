@@ -1,9 +1,13 @@
 package atec.poo.loja.app.clients;
 
+import atec.poo.loja.app.exceptions.AppNoClientsFoundException;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.clients.Client;
+import atec.poo.loja.core.exceptions.NoClientsFoundException;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,6 +39,27 @@ public class DoSearchClients
     public void executar()
             throws DialogException {
 
-        // TODO: A fazer pelos alunos
+        ArrayList<Client> clients;
+
+        String searchTerm = Prompt.searchTerm();
+
+        try {
+            clients = this.getReceptor().searchClients(searchTerm);
+        } catch (NoClientsFoundException e) {
+            throw new AppNoClientsFoundException(e.searchTerm());
+        }
+
+        Message.clientsListHeader(
+                clients.size()
+        );
+
+        for (Client client: clients) {
+            Message.clientSearchItem(
+                    client.getId(),
+                    client.getName(),
+                    client.getNif(),
+                    client.getStatus().toString()
+            );
+        }
     }
 }

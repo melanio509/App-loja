@@ -31,12 +31,12 @@ public class DoShowClient extends Comando<StoreManager> {
      */
     @Override
     public void executar() throws DialogException {
+        Client client;
+
         int id = Prompt.clientId();
 
-        Client client = null;
-
         try {
-            client = this.getReceptor().getClient(id);
+            client = this.getReceptor().showClient(id);
         } catch (NoSuchClientException e) {
             throw new AppNoSuchClientException(e.getId());
         }

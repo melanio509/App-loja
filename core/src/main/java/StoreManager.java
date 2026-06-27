@@ -65,8 +65,20 @@ public class StoreManager {
         return this.store.listClients();
     }
 
-    public Client getClient(int id) throws NoSuchClientException {
-        return this.store.getClient(id);
+    public ArrayList<Client> listClientsByAge() throws NoClientsRegisteredException {
+        return this.store.listClientsByAge();
+    }
+
+    public Client showClient(int id) throws NoSuchClientException {
+        return this.store.showClient(id);
+    }
+
+    public void changeClientName (int id, String name) throws NoSuchClientException {
+        this.store.changeClientName(id, name);
+    }
+
+    public ArrayList<Client> searchClients(String searchTerm) throws NoClientsFoundException {
+        return this.store.searchClients(searchTerm);
     }
 
     public int registProduct (String name, double price, int stock, LocalDate expirationDate)

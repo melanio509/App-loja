@@ -1,6 +1,9 @@
 package atec.poo.loja.app.clients;
 
+import atec.poo.loja.app.exceptions.AppNoSuchClientException;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.clients.Client;
+import atec.poo.loja.core.exceptions.NoSuchClientException;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
 
@@ -25,6 +28,18 @@ public class DoChangeClientName extends Comando<StoreManager> {
      */
     @Override
     public void executar() throws DialogException {
-        // TODO: A fazer pelos alunos
+        int id = Prompt.clientId();
+
+        try {
+            Client client = this.getReceptor().showClient(id);
+
+            String oldName = client.getName();
+            String newName = Prompt.newClientName();
+
+            this.getReceptor().changeClientName(id, newName);
+            Message.clientNameChanged(id, oldName, newName);
+        } catch (NoSuchClientException e) {
+            throw new AppNoSuchClientException(e.getId());
+        }
     }
 }

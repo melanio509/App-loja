@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 
@@ -92,7 +93,6 @@ public class Store implements Serializable {
         return true;
     }
 
-    //TODO: Completar restantes métodos
     public int registClient (String name, String nif, LocalDate birthDate) throws InvalidClientException {
         Client client = new Client(this.nextClientID, name, nif, birthDate);
 
@@ -117,12 +117,66 @@ public class Store implements Serializable {
         return clients;
     }
 
-    public Client getClient(int id) throws NoSuchClientException {
+    public ArrayList<Client> listClientsByAge() throws NoClientsRegisteredException {
+        ArrayList<Client> clients = new ArrayList<>(this.clients.values());
+
+        if(clients.isEmpty()) {
+            throw new NoClientsRegisteredException();
+        }
+
+        clients.sort(
+                Comparator
+                        .comparing((Client client) -> client.getAge(this.today))
+                        .thenComparing(Client::getStatus)
+                        .thenComparing(Client::getId)
+        );
+
+        return clients;
+    }
+
+    public Client showClient(int id) throws NoSuchClientException {
         if(!this.clients.containsKey(id)) {
             throw new NoSuchClientException(id);
         }
 
         return this.clients.get(id);
+    }
+
+    public void changeClientName (int id, String name) throws NoSuchClientException {
+        if(this.clients.get(id) == null) {
+            throw new NoSuchClientException(id);
+        }
+
+        this.clients.get(id).setName(name);
+    }
+
+    public ArrayList<Client> searchClients(String searchTerm) throws NoClientsFoundException {
+        ArrayList<Client> clients = new ArrayList<>(this.clients.values());
+        ArrayList<Client> searchedClients = new ArrayList<>();
+
+        if(clients.isEmpty())
+            throw new NoClientsFoundException(searchTerm);
+
+        for (Client client : clients) {
+            boolean matchName = client.getName().contains(searchTerm);
+            boolean matchNif = client.getNif().contains(searchTerm);
+            boolean matchStatus = client.getStatus().name().contains(searchTerm);
+
+            if (matchName || matchNif || matchStatus) {
+                searchedClients.add(client);
+            }
+        }
+
+        if(searchedClients.isEmpty())
+            throw new NoClientsFoundException(searchTerm);
+
+        searchedClients.sort(
+                Comparator
+                        .comparing(Client::getName)
+                        .thenComparing(Client::getId)
+        );
+
+        return searchedClients;
     }
 
     private void validProduct(double price, int stock, int warrantyMonths)
