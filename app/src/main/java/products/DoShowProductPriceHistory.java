@@ -1,6 +1,9 @@
 package atec.poo.loja.app.products;
 
+import atec.poo.loja.app.exceptions.AppNoSuchProductException;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.exceptions.NoSuchProductException;
+import atec.poo.loja.core.products.*;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
 
@@ -37,7 +40,26 @@ public class DoShowProductPriceHistory
     public void executar()
             throws DialogException {
 
-        //TODO: a implementar pelos alunos
+        int id = Prompt.productId();
+
+        try {
+            Product product = this.getReceptor().showProduct(id);
+
+            Message.productPriceHistoryHeader(
+                    product.getId(),
+                    product.getName(),
+                    product.getPriceHistory().size()
+            );
+
+            for(PriceHistory priceHistory : product.getPriceHistory()) {
+                Message.productPriceHistoryItem(
+                        priceHistory.getDate().toString(),
+                        priceHistory.getPrice()
+                );
+            }
+        } catch (NoSuchProductException e) {
+            throw new AppNoSuchProductException(e.getId());
+        }
 
     }
 }

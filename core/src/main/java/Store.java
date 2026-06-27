@@ -263,4 +263,57 @@ public class Store implements Serializable {
         return productsByCategory;
     }
 
+    public ArrayList<Product> searchProducts(String searchTerm) throws NoProductsFoundException {
+
+        ArrayList<Product> searchedProducts = new ArrayList<>();
+
+        if(this.products.isEmpty())
+            throw new NoProductsFoundException(searchTerm);
+
+        for (Product product : this.products.values()) {
+            boolean matchName = product.getName().contains(searchTerm);
+
+            if (matchName) {
+                searchedProducts.add(product);
+            }
+        }
+
+        if(searchedProducts.isEmpty())
+            throw new NoProductsFoundException(searchTerm);
+
+        Collections.sort(searchedProducts);
+        return searchedProducts;
+    }
+
+    public void changeProductPrice (int id, double price) throws InvalidProductPriceException {
+        if(price <= 0) {
+            throw new InvalidProductPriceException(price);
+        }
+
+        this.products.get(id).updatePrice(getToday(), price);
+    }
+
+    public ArrayList<Product> increaseCategoryPrices (int category, double percentageIncrease)
+            throws NoProductsInCategoryException, NoProductsRegisteredException, InvalidCategoryPriceIncreaseException {
+
+        ArrayList<Product> productsByCategoryIncreased = this.listProductsByCategory(category);
+
+        if(percentageIncrease <= 0) {
+            throw new InvalidCategoryPriceIncreaseException(percentageIncrease);
+        }
+
+        for (Product product : productsByCategoryIncreased)
+            product.increasePrice(getToday(), percentageIncrease);
+
+        return productsByCategoryIncreased;
+    }
+
+    public void addProductStock (int id, int quantity) throws InvalidProductStockQuantityException {
+        if(quantity <= 0) {
+            throw new InvalidProductStockQuantityException(quantity);
+        }
+
+        this.products.get(id).updateStock(quantity);
+    }
+
 }

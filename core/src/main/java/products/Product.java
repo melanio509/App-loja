@@ -28,22 +28,13 @@ public abstract class Product implements Comparable<Product>{
     }
 
     public void updatePrice(LocalDate today, double newPrice) {
-
-        if (newPrice <= 0)
-            throw new IllegalArgumentException("Preço inválido.");
-
         this.price = newPrice;
-
         addPriceHistory(today, newPrice);
     }
 
     public void increasePrice(LocalDate today, double percentage) {
 
-        if (percentage < 0)
-            return;
-
-        double newPrice =
-                price * (1 + percentage / 100);
+        double newPrice = this.price * (1 + percentage / 100);
 
         updatePrice(today, newPrice);
     }
@@ -64,6 +55,10 @@ public abstract class Product implements Comparable<Product>{
 
     public int getStock() {
         return stock;
+    }
+
+    public void updateStock(int quantity){
+        this.stock += quantity;
     }
 
     public ProductCategory getCategory() {

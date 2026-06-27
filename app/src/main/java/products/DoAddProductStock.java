@@ -1,6 +1,13 @@
 package atec.poo.loja.app.products;
 
+import atec.poo.loja.app.exceptions.AppInvalidProductPriceException;
+import atec.poo.loja.app.exceptions.AppInvalidProductStockQuantityException;
+import atec.poo.loja.app.exceptions.AppNoSuchProductException;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.exceptions.InvalidProductPriceException;
+import atec.poo.loja.core.exceptions.InvalidProductStockQuantityException;
+import atec.poo.loja.core.exceptions.NoSuchProductException;
+import atec.poo.loja.core.products.Product;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
 
@@ -34,7 +41,19 @@ public class DoAddProductStock
     public void executar()
             throws DialogException {
 
-        //TODO: a implementar pelos alunos
+        int id = Prompt.productId();
+
+        try {
+            Product product = this.getReceptor().showProduct(id);
+            int quantity = Prompt.stockQuantity();
+
+            this.getReceptor().addProductStock(id, quantity);
+            Message.productStockAdded(id, quantity, product.getStock());
+        } catch (NoSuchProductException e) {
+            throw new AppNoSuchProductException(e.getId());
+        } catch (InvalidProductStockQuantityException e) {
+            throw new AppInvalidProductStockQuantityException(e.getQuantity());
+        }
 
     }
 }

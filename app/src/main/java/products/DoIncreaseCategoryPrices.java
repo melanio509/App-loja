@@ -1,8 +1,17 @@
 package atec.poo.loja.app.products;
 
+import atec.poo.loja.app.exceptions.AppInvalidCategoryPriceIncreaseException;
+import atec.poo.loja.app.exceptions.AppNoProductsInCategoryException;
+import atec.poo.loja.app.exceptions.AppNoProductsRegisteredException;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.exceptions.InvalidCategoryPriceIncreaseException;
+import atec.poo.loja.core.exceptions.NoProductsInCategoryException;
+import atec.poo.loja.core.exceptions.NoProductsRegisteredException;
+import atec.poo.loja.core.products.Product;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
+
+import java.util.ArrayList;
 
 /**
  * Comando responsável por aumentar os preços dos produtos
@@ -35,6 +44,23 @@ public class DoIncreaseCategoryPrices
     public void executar()
             throws DialogException {
 
-        //TODO: a implementar pelos alunos
+        int category = Prompt.productCategory();
+        double percentageIncrease = Prompt.percentageIncrease();
+        ArrayList<Product> productsByCategory;
+
+        try {
+            productsByCategory = this.getReceptor().increaseCategoryPrices(category, percentageIncrease);
+            Message.categoryPricesIncreased(
+                    productsByCategory.get(0).getCategory().getName(),
+                    percentageIncrease,
+                    productsByCategory.size()
+            );
+        } catch (NoProductsInCategoryException e) {
+            throw new AppNoProductsInCategoryException(e.getCategory());
+        } catch (NoProductsRegisteredException e) {
+            throw new AppNoProductsRegisteredException();
+        } catch (InvalidCategoryPriceIncreaseException e) {
+            throw new AppInvalidCategoryPriceIncreaseException(e.getPercentageIncrease());
+        }
     }
 }

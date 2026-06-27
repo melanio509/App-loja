@@ -138,4 +138,21 @@ public class StoreManager {
         return this.store.listProductsByCategory(category);
     }
 
+    public ArrayList<Product> searchProducts(String searchTerm) throws NoProductsFoundException {
+        return this.store.searchProducts(searchTerm);
+    }
+
+    public void changeProductPrice (int id, double price) throws InvalidProductPriceException {
+        this.store.changeProductPrice(id, price);
+    }
+
+    public ArrayList<Product> increaseCategoryPrices (int category, double percentageIncrease)
+            throws NoProductsInCategoryException, NoProductsRegisteredException, InvalidCategoryPriceIncreaseException {
+        return this.store.increaseCategoryPrices(category, percentageIncrease);
+    }
+
+    public void addProductStock (int id, int quantity) throws InvalidProductStockQuantityException {
+       this.store.addProductStock(id, quantity);
+    }
+
 }
