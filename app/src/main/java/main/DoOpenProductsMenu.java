@@ -33,5 +33,6 @@ public class DoOpenProductsMenu extends Comando<StoreManager> {
         new atec.poo.loja.app.products.Menu(
                 this.getReceptor()
         ).open();
+
     }
 }

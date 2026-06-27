@@ -1,10 +1,13 @@
 package atec.poo.loja.app.clients;
 
+import atec.poo.loja.app.exceptions.AppNoClientsRegisteredException;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.clients.Client;
+import atec.poo.loja.core.exceptions.NoClientsRegisteredException;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Comando responsável por listar os clientes registados.
@@ -27,7 +30,25 @@ public class DoListClients extends Comando<StoreManager> {
      */
     @Override
     public void executar() throws DialogException {
-        // TODO: A fazer pelos alunos
+        ArrayList<Client> clients;
 
+        try {
+            clients = this.getReceptor().listClients();
+        } catch (NoClientsRegisteredException e) {
+            throw new AppNoClientsRegisteredException();
+        }
+
+        Message.clientsListHeader(
+                clients.size()
+        );
+
+        for (Client client : clients) {
+            Message.clientsListItem(
+                    client.getId(),
+                    client.getName(),
+                    client.getNif()
+            );
+
+        }
     }
 }

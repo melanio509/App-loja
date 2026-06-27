@@ -1,8 +1,14 @@
 package atec.poo.loja.app.clients;
 
+import atec.poo.loja.app.exceptions.AppNoSuchClientException;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.clients.Client;
+import atec.poo.loja.core.exceptions.NoSuchClientException;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
+
+import java.time.LocalDate;
+import java.util.Scanner;
 
 /**
  * Comando responsável por apresentar os detalhes de um cliente.
@@ -25,7 +31,23 @@ public class DoShowClient extends Comando<StoreManager> {
      */
     @Override
     public void executar() throws DialogException {
-        // TODO: A fazer pelos alunos
+        int id = Prompt.clientId();
 
+        Client client = null;
+
+        try {
+            client = this.getReceptor().getClient(id);
+        } catch (NoSuchClientException e) {
+            throw new AppNoSuchClientException(e.getId());
+        }
+
+        Message.clientDetails(
+                client.getId(),
+                client.getName(),
+                client.getNif(),
+                client.getBirthDate().toString(),
+                client.getAge(this.getReceptor().getToday()),
+                client.getStatus().toString()
+        );
     }
 }

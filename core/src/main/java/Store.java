@@ -1,8 +1,15 @@
 package atec.poo.loja.core;
 
+import atec.poo.loja.core.clients.Client;
+import atec.poo.loja.core.exceptions.*;
+import atec.poo.loja.core.products.*;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 
 public class Store implements Serializable {
@@ -28,6 +35,11 @@ public class Store implements Serializable {
     private LocalDate today;
 
     //TODO: A IMPLEMENTAR. Restantes atributos da classe
+    private int nextClientID;
+    private HashMap<Integer, Client> clients;
+
+    private int nextProductID;
+    private HashMap<Integer, Product> products;
 
 
     /**
@@ -35,7 +47,13 @@ public class Store implements Serializable {
      */
     public Store() {
         this.today = INITIAL_DATE;
+
         //TODO: Completar pelos alunos
+        this.nextClientID = 1;
+        this.clients = new HashMap<>();
+
+        this.nextProductID = 1;
+        this.products = new HashMap<>();
 
     }
 
@@ -59,9 +77,7 @@ public class Store implements Serializable {
      * @return {@code true} se a data tiver sido avançada;
      *         {@code false} se o número de dias não for válido
      */
-    public boolean advanceDate(
-            int numberOfDays
-    ) {
+    public boolean advanceDate(int numberOfDays) {
         if (numberOfDays <= 0) {
             return false;
         }
@@ -77,5 +93,77 @@ public class Store implements Serializable {
     }
 
     //TODO: Completar restantes métodos
+    public int registClient (String name, String nif, LocalDate birthDate) throws InvalidClientException {
+        Client client = new Client(this.nextClientID, name, nif, birthDate);
 
+        if(client.getAge(this.today) < 18) {
+            // Lançar excepção
+            throw new InvalidClientException(birthDate);
+        }
+
+        this.clients.put(client.getId(), client);
+        this.nextClientID++;
+        return client.getId();
+    }
+
+    public ArrayList<Client> listClients() throws NoClientsRegisteredException {
+        ArrayList<Client> clients = new ArrayList<>(this.clients.values());
+
+        if(clients.isEmpty()) {
+            throw new NoClientsRegisteredException();
+        }
+
+        Collections.sort(clients);
+        return clients;
+    }
+
+    public Client getClient(int id) throws NoSuchClientException {
+        if(!this.clients.containsKey(id)) {
+            throw new NoSuchClientException(id);
+        }
+
+        return this.clients.get(id);
+    }
+
+    private void validProduct(double price, int stock, int warrantyMonths)
+            throws InvalidProductPriceException, InvalidProductStockException, InvalidWarrantyMonthsException {
+        if (price <= 0)
+            throw new InvalidProductPriceException(price);
+
+        if (stock < 0)
+            throw new InvalidProductStockException(stock);
+
+        if (warrantyMonths <= 0)
+            throw new InvalidWarrantyMonthsException(warrantyMonths);
+    }
+
+    private int storeProduct(Product product) {
+        this.products.put(product.getId(), product);
+        this.nextProductID++;
+        return product.getId();
+    }
+
+    public int registProduct (String name, double price, int stock, LocalDate expirationDate)
+            throws InvalidProductPriceException, InvalidProductStockException, InvalidWarrantyMonthsException {
+
+        validProduct(price, stock, 1);
+        Product product = new Food(this.nextProductID, name, price, stock, expirationDate, getToday());
+        return storeProduct(product);
+    }
+
+    public int registProduct (String name, double price, int stock, int warrantyMonths)
+            throws InvalidProductPriceException, InvalidProductStockException, InvalidWarrantyMonthsException {
+
+        validProduct(price, stock, warrantyMonths);
+        Product product = new Electronic(this.nextProductID, name, price, stock, warrantyMonths, getToday());
+        return storeProduct(product);
+    }
+
+    public int registProduct (String name, double price, int stock, String clothingSize)
+            throws InvalidProductPriceException, InvalidProductStockException, InvalidWarrantyMonthsException {
+
+        validProduct(price, stock, 1);
+        Product product = new Clothing(this.nextProductID, name, price, stock, clothingSize, getToday());
+        return storeProduct(product);
+    }
 }

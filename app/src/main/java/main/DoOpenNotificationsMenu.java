@@ -1,8 +1,10 @@
 package atec.poo.loja.app.main;
 
+
 import atec.poo.loja.core.StoreManager;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
+import atec.poo.loja.app.notifications.Menu;
 
 /**
  * Comando responsável por abrir o menu de notificações.
@@ -31,5 +33,6 @@ public class DoOpenNotificationsMenu extends Comando<StoreManager> {
     @Override
     public void executar() throws DialogException {
         // TODO: A completar pelos alunos
+        new Menu(this.getReceptor()).open();
     }
 }

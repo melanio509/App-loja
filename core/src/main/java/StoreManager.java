@@ -1,9 +1,13 @@
 package atec.poo.loja.core;
 
+import atec.poo.loja.core.clients.Client;
+import atec.poo.loja.core.exceptions.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class StoreManager {
@@ -53,5 +57,30 @@ public class StoreManager {
     }
 
     //TODO: A completar pelos alunos
+    public int registClient (String name, String nif, LocalDate birthDate) throws InvalidClientException {
+        return this.store.registClient(name, nif, birthDate);
+    }
 
+    public ArrayList<Client> listClients() throws NoClientsRegisteredException {
+        return this.store.listClients();
+    }
+
+    public Client getClient(int id) throws NoSuchClientException {
+        return this.store.getClient(id);
+    }
+
+    public int registProduct (String name, double price, int stock, LocalDate expirationDate)
+            throws InvalidProductPriceException, InvalidProductStockException, InvalidWarrantyMonthsException {
+        return this.store.registProduct(name, price, stock, expirationDate);
+    }
+
+    public int registProduct (String name, double price, int stock, int warrantyMonths)
+            throws InvalidProductPriceException, InvalidProductStockException, InvalidWarrantyMonthsException {
+        return this.store.registProduct(name, price, stock, warrantyMonths);
+    }
+
+    public int registProduct (String name, double price, int stock, String clothingSize)
+            throws InvalidProductPriceException, InvalidProductStockException, InvalidWarrantyMonthsException {
+        return this.store.registProduct(name, price, stock, clothingSize);
+    }
 }
