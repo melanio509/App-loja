@@ -2,6 +2,7 @@ package atec.poo.loja.core;
 
 import atec.poo.loja.core.clients.Client;
 import atec.poo.loja.core.exceptions.*;
+import atec.poo.loja.core.products.Product;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +38,8 @@ public class StoreManager {
         return this.store.advanceDate(numberOfDays);
     }
 
-    public void importFile(String dataFile) throws IOException {
+    public void importFile(String dataFile)
+            throws IOException, InvalidClientException, InvalidWarrantyMonthsException, InvalidProductPriceException, InvalidProductStockException {
         Scanner ler = new Scanner(new File(dataFile));
         while (ler.hasNextLine()) {
             String linha = ler.nextLine();
@@ -46,12 +48,39 @@ public class StoreManager {
             String[] elements = linha.split("\\|");
             switch (elements[0]) {
                 case "CLIENT":
-                    //TODO
+                    this.registClient(
+                            elements[1],
+                            elements[2],
+                            LocalDate.parse(elements[3])
+                    );
                     break;
-
                 case "PRODUCT":
-                    //TODO
-                    break;
+                    switch (elements[1]) {
+                        case "FOOD":
+                            this.registProduct(
+                                    elements[2],
+                                    Double.parseDouble(elements[3]),
+                                    Integer.parseInt(elements[4]),
+                                    LocalDate.parse(elements[5])
+                            );
+                            break;
+                        case "ELECTRONICS":
+                            this.registProduct(
+                                    elements[2],
+                                    Double.parseDouble(elements[3]),
+                                    Integer.parseInt(elements[4]),
+                                    Integer.parseInt(elements[5])
+                            );
+                            break;
+                        case "CLOTHING":
+                            this.registProduct(
+                                    elements[2],
+                                    Double.parseDouble(elements[3]),
+                                    Integer.parseInt(elements[4]),
+                                    elements[5]
+                            );
+                            break;
+                    }
             }
         }
     }
@@ -95,4 +124,9 @@ public class StoreManager {
             throws InvalidProductPriceException, InvalidProductStockException, InvalidWarrantyMonthsException {
         return this.store.registProduct(name, price, stock, clothingSize);
     }
+
+    public Product showProduct(int id) throws NoSuchProductException {
+        return this.store.showProduct(id);
+    }
+
 }

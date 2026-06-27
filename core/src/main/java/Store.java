@@ -179,16 +179,12 @@ public class Store implements Serializable {
         return searchedClients;
     }
 
-    private void validProduct(double price, int stock, int warrantyMonths)
-            throws InvalidProductPriceException, InvalidProductStockException, InvalidWarrantyMonthsException {
+    private void validateProduct(double price, int stock)
+            throws InvalidProductPriceException, InvalidProductStockException {
         if (price <= 0)
             throw new InvalidProductPriceException(price);
-
         if (stock < 0)
             throw new InvalidProductStockException(stock);
-
-        if (warrantyMonths <= 0)
-            throw new InvalidWarrantyMonthsException(warrantyMonths);
     }
 
     private int storeProduct(Product product) {
@@ -198,9 +194,9 @@ public class Store implements Serializable {
     }
 
     public int registProduct (String name, double price, int stock, LocalDate expirationDate)
-            throws InvalidProductPriceException, InvalidProductStockException, InvalidWarrantyMonthsException {
+            throws InvalidProductPriceException, InvalidProductStockException {
 
-        validProduct(price, stock, 1);
+        validateProduct(price, stock);
         Product product = new Food(this.nextProductID, name, price, stock, expirationDate, getToday());
         return storeProduct(product);
     }
@@ -208,16 +204,29 @@ public class Store implements Serializable {
     public int registProduct (String name, double price, int stock, int warrantyMonths)
             throws InvalidProductPriceException, InvalidProductStockException, InvalidWarrantyMonthsException {
 
-        validProduct(price, stock, warrantyMonths);
+        validateProduct(price, stock);
+
+        if (warrantyMonths <= 0)
+            throw new InvalidWarrantyMonthsException(warrantyMonths);
+
         Product product = new Electronic(this.nextProductID, name, price, stock, warrantyMonths, getToday());
         return storeProduct(product);
     }
 
     public int registProduct (String name, double price, int stock, String clothingSize)
-            throws InvalidProductPriceException, InvalidProductStockException, InvalidWarrantyMonthsException {
+            throws InvalidProductPriceException, InvalidProductStockException {
 
-        validProduct(price, stock, 1);
+        validateProduct(price, stock);
         Product product = new Clothing(this.nextProductID, name, price, stock, clothingSize, getToday());
         return storeProduct(product);
     }
+
+    public Product showProduct(int id) throws NoSuchProductException {
+        if(!this.products.containsKey(id)) {
+            throw new NoSuchProductException(id);
+        }
+
+        return this.products.get(id);
+    }
+
 }

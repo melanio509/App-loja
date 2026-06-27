@@ -46,51 +46,47 @@ public class DoRegisterProduct
     public void executar()
             throws DialogException {
 
-        //TODO: a implementar pelos alunos
         int id;
         int category = Prompt.productCategory();
-
         String name = Prompt.productName();
         double price = Prompt.productPrice();
         int stock = Prompt.initialStock();
 
-        if (category == 1) {
-            LocalDate expirationDate = Prompt.expirationDate();
-            try {
-                id = this.getReceptor().registProduct(name, price, stock, expirationDate);
-                Message.productRegistered(id);
-            } catch (InvalidProductPriceException e) {
-                throw new AppInvalidProductPriceException(e.getPrice());
-            } catch (InvalidProductStockException e) {
-                throw new AppInvalidProductStockException(e.getStock());
+        try {
+            switch (category) {
+                case 1:
+                    id = this.getReceptor().registProduct(
+                            name,
+                            price,
+                            stock,
+                            Prompt.expirationDate());
+                    break;
+                case 2:
+                    id = this.getReceptor().registProduct(
+                            name,
+                            price,
+                            stock,
+                            Prompt.warrantyMonths());
+                    break;
+                case 3:
+                    id = this.getReceptor().registProduct(
+                            name,
+                            price,
+                            stock,
+                            Prompt.clothingSize());
+                    break;
+                default:
+                    return;
             }
-            catch (InvalidWarrantyMonthsException e) {
-                throw new AppInvalidWarrantyMonthsException(e.getWarrantyMonths());
-            }
-        } else if (category == 2) {
-            int warrantyMonths = Prompt.warrantyMonths();
-            try {
-                id = this.getReceptor().registProduct(name, price, stock, warrantyMonths);
-                Message.productRegistered(id);
-            } catch (InvalidProductPriceException e) {
-                throw new AppInvalidProductPriceException(e.getPrice());
-            } catch (InvalidProductStockException e) {
-                throw new AppInvalidProductStockException(e.getStock());
-            } catch (InvalidWarrantyMonthsException e) {
-                throw new AppInvalidWarrantyMonthsException(e.getWarrantyMonths());
-            }
-        } else if (category == 3) {
-            String clothingSize = Prompt.clothingSize();
-            try {
-                id = this.getReceptor().registProduct(name, price, stock, clothingSize);
-                Message.productRegistered(id);
-            } catch (InvalidProductPriceException e) {
-                throw new AppInvalidProductPriceException(e.getPrice());
-            } catch (InvalidProductStockException e) {
-                throw new AppInvalidProductStockException(e.getStock());
-            } catch (InvalidWarrantyMonthsException e) {
-                throw new AppInvalidWarrantyMonthsException(e.getWarrantyMonths());
-            }
+
+            Message.productRegistered(id);
+
+        } catch (InvalidProductPriceException e) {
+            throw new AppInvalidProductPriceException(e.getPrice());
+        } catch (InvalidProductStockException e) {
+            throw new AppInvalidProductStockException(e.getStock());
+        } catch (InvalidWarrantyMonthsException e) {
+            throw new AppInvalidWarrantyMonthsException(e.getWarrantyMonths());
         }
     }
 }

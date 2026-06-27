@@ -1,6 +1,14 @@
 package atec.poo.loja.app.products;
 
+import atec.poo.loja.app.exceptions.AppNoSuchProductException;
+import atec.poo.loja.app.products.Message;
+import atec.poo.loja.app.products.Prompt;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.exceptions.NoSuchProductException;
+import atec.poo.loja.core.products.Clothing;
+import atec.poo.loja.core.products.Electronic;
+import atec.poo.loja.core.products.Food;
+import atec.poo.loja.core.products.Product;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
 
@@ -33,7 +41,45 @@ public class DoShowProduct
     public void executar()
             throws DialogException {
 
-        //TODO: a implementar pelos alunos
+        int id = Prompt.productId();
 
+        try {
+            Product product = this.getReceptor().showProduct(id);
+
+            if (product instanceof Food food) {
+
+                Message.foodProductDetails(
+                        food.getId(),
+                        food.getName(),
+                        food.getCategory().toString(),
+                        food.getPrice(),
+                        food.getStock(),
+                        food.getExpirationDate().toString());
+
+            }
+            else if (product instanceof Electronic electronic) {
+
+                Message.electronicProductDetails(
+                        electronic.getId(),
+                        electronic.getName(),
+                        electronic.getCategory().toString(),
+                        electronic.getPrice(),
+                        electronic.getStock(),
+                        electronic.getWarrantyMonths());
+
+            }
+            else if (product instanceof Clothing clothing) {
+
+                Message.clothingProductDetails(
+                        clothing.getId(),
+                        clothing.getName(),
+                        clothing.getCategory().toString(),
+                        clothing.getPrice(),
+                        clothing.getStock(),
+                        clothing.getSize().toString());
+            }
+        } catch (NoSuchProductException e) {
+            throw new AppNoSuchProductException(e.getId());
+        }
     }
 }
