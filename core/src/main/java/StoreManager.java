@@ -129,4 +129,13 @@ public class StoreManager {
         return this.store.showProduct(id);
     }
 
+    public ArrayList<Product> listProducts() throws NoProductsRegisteredException {
+        return this.store.listProducts();
+    }
+
+    public ArrayList<Product> listProductsByCategory(int category)
+            throws NoProductsRegisteredException, NoProductsInCategoryException {
+        return this.store.listProductsByCategory(category);
+    }
+
 }

@@ -1,9 +1,14 @@
 package atec.poo.loja.app.products;
 
+import atec.poo.loja.app.products.Message;
+import atec.poo.loja.app.exceptions.AppNoProductsRegisteredException;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.exceptions.NoProductsRegisteredException;
+import atec.poo.loja.core.products.Product;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +40,28 @@ public class DoListProducts
     public void executar()
             throws DialogException {
 
-        //TODO: a implementar pelos alunos
+        ArrayList<Product> products;
+
+        try {
+            products = this.getReceptor().listProducts();
+        } catch (NoProductsRegisteredException e) {
+            throw new AppNoProductsRegisteredException();
+        }
+
+        Message.productsListHeader(
+                products.size()
+        );
+
+        for (Product product : products) {
+            Message.productsListItem(
+                    product.getId(),
+                    product.getName(),
+                    product.getCategory().toString(),
+                    product.getPrice(),
+                    product.getStock()
+            );
+
+        }
 
     }
 }

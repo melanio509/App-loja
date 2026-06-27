@@ -3,7 +3,7 @@ package atec.poo.loja.core.products;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public abstract class Product {
+public abstract class Product implements Comparable<Product>{
     private int id;
     private String name;
     private double price;
@@ -85,4 +85,11 @@ public abstract class Product {
                 stock
         );
     }
+
+    public int compareTo(Product p){
+        if(this.name.equals(p.getName()))
+            return this.id - p.getId();
+
+        return this.name.compareTo(p.getName());
+    };
 }

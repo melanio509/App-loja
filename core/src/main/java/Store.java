@@ -229,4 +229,38 @@ public class Store implements Serializable {
         return this.products.get(id);
     }
 
+    public ArrayList<Product> listProducts() throws NoProductsRegisteredException {
+        ArrayList<Product> products = new ArrayList<>(this.products.values());
+
+        if(products.isEmpty()) {
+            throw new NoProductsRegisteredException();
+        }
+
+        Collections.sort(products);
+        return products;
+    }
+
+    public ArrayList<Product> listProductsByCategory(int category)
+            throws NoProductsRegisteredException, NoProductsInCategoryException {
+
+        if(this.products.isEmpty()) {
+            throw new NoProductsRegisteredException();
+        }
+
+        ArrayList<Product> productsByCategory = new ArrayList<>();
+
+        for (Product product : this.products.values()) {
+            if (product.getCategory().getCode() == category) {
+                productsByCategory.add(product);
+            }
+        }
+
+        if(productsByCategory.isEmpty()) {
+            throw new NoProductsInCategoryException(category);
+        }
+
+        Collections.sort(productsByCategory);
+        return productsByCategory;
+    }
+
 }
