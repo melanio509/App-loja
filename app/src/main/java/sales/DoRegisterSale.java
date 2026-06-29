@@ -1,8 +1,17 @@
 package atec.poo.loja.app.sales;
 
+import atec.poo.loja.app.exceptions.*;
+import atec.poo.loja.app.sales.Message;
+import atec.poo.loja.app.sales.Prompt;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.clients.Client;
+import atec.poo.loja.core.exceptions.*;
+import atec.poo.loja.core.products.Product;
+import atec.poo.loja.core.sales.Sale;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
+
+import java.time.LocalDate;
 
 /**
  * Comando responsável por registar uma venda.
@@ -37,7 +46,46 @@ public class DoRegisterSale
     public void executar()
             throws DialogException {
 
-        // TODO: A fazer pelos alunos
+        Client client = null;
+        Product product = null;
+        try {
+            int clientId = Prompt.clientId();
+            client = this.getReceptor().showClient(clientId);
+
+            int productId = Prompt.productId();
+            product = this.getReceptor().showProduct(productId);
+
+            int quantity = Prompt.quantity();
+
+            Sale newSale = this.getReceptor().registSale(client, product, quantity);
+            Message.saleRegistered(newSale.getId(), newSale.getTotalPrice());
+        } catch (NoSuchClientException e) {
+            throw new AppNoSuchClientException(e.getId());
+        } catch (NoSuchProductException e) {
+            throw new AppNoSuchProductException(e.getId());
+        } catch (ProductCannotBeSoldException e) {
+            throw new AppProductCannotBeSoldException(e.getProductId());
+        } catch (InsufficientProductStockException e) {
+
+            if (Prompt.subscribeProductNotifications()) {
+                try {
+                    this.getReceptor()
+                            .subscribeProductNotification(client, product);
+                    Message.subscriptionCreated(
+                            client.getId(),
+                            product.getId());
+                } catch (ActiveSubscriptionAlreadyExistsException ex) {
+                    throw new AppActiveSubscriptionAlreadyExistsException(ex.getClientId(), ex.getProductId());
+                }
+            }
+
+            throw new AppInsufficientProductStockException(
+                    e.getProductId(),
+                    e.getRequestedQuantity(),
+                    e.getAvailableStock());
+        } catch (InvalidSaleQuantityException e) {
+            throw new AppInvalidSaleQuantityException(e.getQuantity());
+        }
 
     }
 }

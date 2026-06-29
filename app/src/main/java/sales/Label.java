@@ -74,7 +74,7 @@ public interface Label {
             "-> Venda [%03d] - %s - %s - Qtd: %d - Total: %.2f €";
 
     String ASK_SUBSCRIBE_PRODUCT_NOTIFICATIONS =
-            "Pretende subscrever notificações para o produto? (s/n):";
+            "Stock insuficiente. Pretende subscrever notificações para o produto? (s/n):";
 
     String SUBSCRIPTION_CREATED_SUCCESS =
             "Subscrição criada com sucesso para o cliente [%d] e produto [%d].";

@@ -3,6 +3,7 @@ package atec.poo.loja.core;
 import atec.poo.loja.core.clients.Client;
 import atec.poo.loja.core.exceptions.*;
 import atec.poo.loja.core.products.Product;
+import atec.poo.loja.core.sales.Sale;
 
 import java.io.File;
 import java.io.IOException;
@@ -153,6 +154,16 @@ public class StoreManager {
 
     public void addProductStock (int id, int quantity) throws InvalidProductStockQuantityException {
        this.store.addProductStock(id, quantity);
+    }
+
+    public Sale registSale (Client client, Product product, int quantity)
+            throws InvalidSaleQuantityException, ProductCannotBeSoldException, InsufficientProductStockException {
+        return this.store.registSale(client, product, quantity);
+    }
+
+    public void subscribeProductNotification (Client client, Product product)
+            throws ActiveSubscriptionAlreadyExistsException {
+        this.store.subscribeProductNotification(client, product);
     }
 
 }

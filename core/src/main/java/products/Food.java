@@ -1,5 +1,7 @@
 package atec.poo.loja.core.products;
 
+import atec.poo.loja.core.Store;
+
 import java.time.LocalDate;
 
 public class Food extends Product{
@@ -16,7 +18,6 @@ public class Food extends Product{
 
     @Override
     public boolean canBeSold() {
-        return !LocalDate.now()
-                .isAfter(expirationDate);
+        return !LocalDate.now().isAfter(expirationDate);
     }
 }

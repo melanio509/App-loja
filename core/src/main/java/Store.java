@@ -1,12 +1,18 @@
 package atec.poo.loja.core;
 
 import atec.poo.loja.core.clients.Client;
+import atec.poo.loja.core.clients.ClientStatus;
 import atec.poo.loja.core.exceptions.*;
 import atec.poo.loja.core.products.*;
+import atec.poo.loja.core.sales.Sale;
+import atec.poo.loja.core.sales.Subscription;
+import atec.poo.loja.core.sales.SubscriptionStatus;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,6 +48,10 @@ public class Store implements Serializable {
     private int nextProductID;
     private HashMap<Integer, Product> products;
 
+    private int nextSaleID;
+    private HashMap<Integer, Sale> sales;
+
+    private ArrayList<Subscription> subscriptions;
 
     /**
      * Cria uma nova loja com a data inicial definida pela aplicação.
@@ -56,6 +66,9 @@ public class Store implements Serializable {
         this.nextProductID = 1;
         this.products = new HashMap<>();
 
+        this.nextSaleID = 1;
+        this.sales = new HashMap<>();
+        this.subscriptions = new ArrayList<>();
     }
 
     /**
@@ -88,7 +101,8 @@ public class Store implements Serializable {
                         numberOfDays
                 );
 
-        //TODO: Update User status after sales implemented
+        for (Client client : this.clients.values())
+            recalculateClientStatus(client);
 
         return true;
     }
@@ -97,7 +111,6 @@ public class Store implements Serializable {
         Client client = new Client(this.nextClientID, name, nif, birthDate);
 
         if(client.getAge(this.today) < 18) {
-            // Lançar excepção
             throw new InvalidClientException(birthDate);
         }
 
@@ -316,4 +329,93 @@ public class Store implements Serializable {
         this.products.get(id).updateStock(quantity);
     }
 
+    public void recalculateClientStatus(Client client) {
+
+        double totalSalesByClient = 0;
+
+        if (client.getAge(today) >= 18 && client.getAge(today) < 25 ) {
+            for (Sale sale : this.sales.values()) {
+                if ((sale.getClient().getId() == client.getId())
+                        && (!sale.getDate().isBefore(today.minusDays(60)))) {
+                    totalSalesByClient += sale.getTotalPrice();
+                }
+            }
+
+            if (totalSalesByClient >= 800) client.setStatus(ClientStatus.PLATINUM);
+            else if (totalSalesByClient >= 400) client.setStatus(ClientStatus.GOLD);
+            else if (totalSalesByClient >= 150) client.setStatus(ClientStatus.SILVER);
+            else client.setStatus(ClientStatus.REGULAR);
+
+        } else if (client.getAge(today) >= 25 && client.getAge(today) < 65 ) {
+            for (Sale sale : this.sales.values()) {
+                if ((sale.getClient().getId() == client.getId())
+                        && (!sale.getDate().isBefore(today.minusDays(30)))) {
+                    totalSalesByClient += sale.getTotalPrice();
+                }
+            }
+
+            if (totalSalesByClient >= 1800) client.setStatus(ClientStatus.PLATINUM);
+            else if (totalSalesByClient >= 900) client.setStatus(ClientStatus.GOLD);
+            else if (totalSalesByClient >= 350) client.setStatus(ClientStatus.SILVER);
+            else client.setStatus(ClientStatus.REGULAR);
+
+        } else if (client.getAge(getToday()) >= 65 ) {
+            for (Sale sale : this.sales.values()) {
+                if ((sale.getClient().getId() == client.getId())
+                        && (!sale.getDate().isBefore(today.minusDays(90)))) {
+                    totalSalesByClient += sale.getTotalPrice();
+                }
+            }
+
+            if (totalSalesByClient >= 650) client.setStatus(ClientStatus.PLATINUM);
+            else if (totalSalesByClient >= 300) client.setStatus(ClientStatus.GOLD);
+            else if (totalSalesByClient >= 100) client.setStatus(ClientStatus.SILVER);
+            else client.setStatus(ClientStatus.REGULAR);
+        }
+    }
+
+    public Sale registSale (Client client, Product product, int quantity)
+            throws InvalidSaleQuantityException, ProductCannotBeSoldException, InsufficientProductStockException {
+
+        if(quantity <= 0) {
+            throw new InvalidSaleQuantityException(quantity);
+        }
+
+        if(!product.canBeSold()) {
+            throw new ProductCannotBeSoldException(product.getId());
+        }
+
+        if(product.getStock() < quantity) {
+            throw new InsufficientProductStockException(product.getId(), quantity, product.getStock());
+        }
+
+        Sale sale = new Sale(this.nextSaleID, getToday(), client, product, quantity);
+
+        product.updateStock(-quantity);
+        recalculateClientStatus(client);
+
+        this.sales.put(sale.getId(), sale);
+        this.nextSaleID++;
+        return sale;
+    }
+
+    public boolean existsSubscription(Client client, Product product) {
+        for (Subscription subscription : subscriptions) {
+            if (subscription.getClient().getId() == client.getId()
+                    && subscription.getProduct().getId() == product.getId()
+                        && subscription.getStatus() == SubscriptionStatus.ATIVA) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void subscribeProductNotification (Client client, Product product)
+            throws ActiveSubscriptionAlreadyExistsException {
+
+        if(existsSubscription(client, product))
+            throw new ActiveSubscriptionAlreadyExistsException(client.getId(), product.getId());
+
+        this.subscriptions.add(new Subscription(client, product, getToday()));
+    }
 }
