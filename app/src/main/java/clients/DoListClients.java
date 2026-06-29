@@ -34,21 +34,21 @@ public class DoListClients extends Comando<StoreManager> {
 
         try {
             clients = this.getReceptor().listClients();
-        } catch (NoClientsRegisteredException e) {
-            throw new AppNoClientsRegisteredException();
-        }
 
-        Message.clientsListHeader(
-                clients.size()
-        );
-
-        for (Client client : clients) {
-            Message.clientsListItem(
-                    client.getId(),
-                    client.getName(),
-                    client.getNif()
+            Message.clientsListHeader(
+                    clients.size()
             );
 
+            for (Client client : clients) {
+                Message.clientsListItem(
+                        client.getId(),
+                        client.getName(),
+                        client.getNif()
+                );
+
+            }
+        } catch (NoClientsRegisteredException e) {
+            throw new AppNoClientsRegisteredException();
         }
     }
 }

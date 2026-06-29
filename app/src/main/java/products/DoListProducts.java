@@ -44,24 +44,22 @@ public class DoListProducts
 
         try {
             products = this.getReceptor().listProducts();
+            Message.productsListHeader(
+                    products.size()
+            );
+
+            for (Product product : products) {
+                Message.productsListItem(
+                        product.getId(),
+                        product.getName(),
+                        product.getCategory().toString(),
+                        product.getPrice(),
+                        product.getStock()
+                );
+
+            }
         } catch (NoProductsRegisteredException e) {
             throw new AppNoProductsRegisteredException();
         }
-
-        Message.productsListHeader(
-                products.size()
-        );
-
-        for (Product product : products) {
-            Message.productsListItem(
-                    product.getId(),
-                    product.getName(),
-                    product.getCategory().toString(),
-                    product.getPrice(),
-                    product.getStock()
-            );
-
-        }
-
     }
 }

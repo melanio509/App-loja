@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class StoreManager {
@@ -167,8 +168,11 @@ public class StoreManager {
     }
 
     public Sale showSale(int id) throws NoSuchSaleException {
-
         return this.store.showSale(id);
+    }
+
+    public ArrayList<Sale> listSales() throws NoSalesRegisteredException {
+        return this.store.listSales();
     }
 
 }

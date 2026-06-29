@@ -56,7 +56,7 @@ public class DoShowSale
                     sale.getProduct().getId(),
                     sale.getUnitPrice(),
                     sale.getQuantity(),
-                    sale.getTotalPrice()
+                    sale.getTotal()
             );
         } catch (NoSuchSaleException e) {
             throw new AppNoSuchSaleException(e.getId());

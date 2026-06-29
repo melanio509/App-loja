@@ -5,7 +5,7 @@ import atec.poo.loja.core.products.Product;
 
 import java.time.LocalDate;
 
-public class Sale {
+public class Sale implements Comparable<Sale>{
     private int id;
     private LocalDate date;
     private Client client;
@@ -70,7 +70,27 @@ public class Sale {
         this.quantity = quantity;
     }
 
-    public double getTotalPrice() {
+    public double getTotal() {
         return unitPrice * quantity;
     }
+
+    @Override
+    public int compareTo(Sale s) {
+        if (this.date.equals(s.getDate()))
+            return this.id - s.getId();
+
+        return this.date.compareTo(s.getDate());
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,9 +1,13 @@
 package atec.poo.loja.app.sales;
 
+import atec.poo.loja.app.exceptions.AppNoSalesRegisteredException;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.exceptions.NoSalesRegisteredException;
+import atec.poo.loja.core.sales.Sale;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +39,30 @@ public class DoListSales
     public void executar()
             throws DialogException {
 
-        //TODO: a implementar pelos alunos
+        ArrayList<Sale> sales;
 
+        try{
+            sales = this.getReceptor().listSales();
+
+            Message.salesListHeader(
+                    sales.size()
+            );
+
+            for (Sale sale : sales) {
+                Message.salesListItem(
+                        sale.getId(),
+                        sale.getDate().toString(),
+                        sale.getClient().getName(),
+                        sale.getProduct().getName(),
+                        sale.getQuantity(),
+                        sale.getTotal()
+                );
+            }
+
+
+
+        } catch (NoSalesRegisteredException e) {
+            throw new AppNoSalesRegisteredException();
+        }
     }
 }

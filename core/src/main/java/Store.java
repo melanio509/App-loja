@@ -337,7 +337,7 @@ public class Store implements Serializable {
             for (Sale sale : this.sales.values()) {
                 if ((sale.getClient().getId() == client.getId())
                         && (!sale.getDate().isBefore(today.minusDays(60)))) {
-                    totalSalesByClient += sale.getTotalPrice();
+                    totalSalesByClient += sale.getTotal();
                 }
             }
 
@@ -350,7 +350,7 @@ public class Store implements Serializable {
             for (Sale sale : this.sales.values()) {
                 if ((sale.getClient().getId() == client.getId())
                         && (!sale.getDate().isBefore(today.minusDays(30)))) {
-                    totalSalesByClient += sale.getTotalPrice();
+                    totalSalesByClient += sale.getTotal();
                 }
             }
 
@@ -363,7 +363,7 @@ public class Store implements Serializable {
             for (Sale sale : this.sales.values()) {
                 if ((sale.getClient().getId() == client.getId())
                         && (!sale.getDate().isBefore(today.minusDays(90)))) {
-                    totalSalesByClient += sale.getTotalPrice();
+                    totalSalesByClient += sale.getTotal();
                 }
             }
 
@@ -426,5 +426,16 @@ public class Store implements Serializable {
         }
 
         return this.sales.get(id);
+    }
+
+    public ArrayList<Sale> listSales() throws NoSalesRegisteredException {
+        ArrayList<Sale> sales = new ArrayList<>(this.sales.values());
+
+        if(sales.isEmpty()) {
+            throw new NoSalesRegisteredException();
+        }
+
+        Collections.sort(sales);
+        return sales;
     }
 }

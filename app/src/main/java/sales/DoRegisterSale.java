@@ -58,7 +58,7 @@ public class DoRegisterSale
             int quantity = Prompt.quantity();
 
             Sale newSale = this.getReceptor().registSale(client, product, quantity);
-            Message.saleRegistered(newSale.getId(), newSale.getTotalPrice());
+            Message.saleRegistered(newSale.getId(), newSale.getTotal());
         } catch (NoSuchClientException e) {
             throw new AppNoSuchClientException(e.getId());
         } catch (NoSuchProductException e) {
