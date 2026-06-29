@@ -1,6 +1,14 @@
 package atec.poo.loja.app.sales;
 
+import atec.poo.loja.app.exceptions.AppNoSuchSaleException;
+import atec.poo.loja.app.sales.Message;
+import atec.poo.loja.app.sales.Prompt;
+import atec.poo.loja.app.exceptions.AppNoSuchClientException;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.exceptions.NoSuchSaleException;
+import atec.poo.loja.core.sales.Sale;
+import atec.poo.loja.core.exceptions.NoSuchClientException;
+import atec.poo.loja.core.sales.Sale;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
 
@@ -33,7 +41,26 @@ public class DoShowSale
     public void executar()
             throws DialogException {
 
-        //TODO: a implementar pelos alunos
+        Sale sale;
+
+        int id = Prompt.saleId();
+
+        try {
+            sale = this.getReceptor().showSale(id);
+            Message.saleDetails(
+                    sale.getId(),
+                    sale.getDate().toString(),
+                    sale.getClient().getName(),
+                    sale.getClient().getId(),
+                    sale.getProduct().getName(),
+                    sale.getProduct().getId(),
+                    sale.getUnitPrice(),
+                    sale.getQuantity(),
+                    sale.getTotalPrice()
+            );
+        } catch (NoSuchSaleException e) {
+            throw new AppNoSuchSaleException(e.getId());
+        }
 
     }
 }

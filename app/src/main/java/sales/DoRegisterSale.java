@@ -83,6 +83,7 @@ public class DoRegisterSale
                     e.getProductId(),
                     e.getRequestedQuantity(),
                     e.getAvailableStock());
+
         } catch (InvalidSaleQuantityException e) {
             throw new AppInvalidSaleQuantityException(e.getQuantity());
         }

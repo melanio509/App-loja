@@ -166,4 +166,9 @@ public class StoreManager {
         this.store.subscribeProductNotification(client, product);
     }
 
+    public Sale showSale(int id) throws NoSuchSaleException {
+
+        return this.store.showSale(id);
+    }
+
 }

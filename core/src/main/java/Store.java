@@ -418,4 +418,13 @@ public class Store implements Serializable {
 
         this.subscriptions.add(new Subscription(client, product, getToday()));
     }
+
+    public Sale showSale(int id) throws NoSuchSaleException {
+
+        if(!this.sales.containsKey(id)) {
+            throw new NoSuchSaleException(id);
+        }
+
+        return this.sales.get(id);
+    }
 }

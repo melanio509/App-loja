@@ -37,17 +37,16 @@ public class DoShowClient extends Comando<StoreManager> {
 
         try {
             client = this.getReceptor().showClient(id);
+            Message.clientDetails(
+                    client.getId(),
+                    client.getName(),
+                    client.getNif(),
+                    client.getBirthDate().toString(),
+                    client.getAge(this.getReceptor().getToday()),
+                    client.getStatus().toString()
+            );
         } catch (NoSuchClientException e) {
             throw new AppNoSuchClientException(e.getId());
         }
-
-        Message.clientDetails(
-                client.getId(),
-                client.getName(),
-                client.getNif(),
-                client.getBirthDate().toString(),
-                client.getAge(this.getReceptor().getToday()),
-                client.getStatus().toString()
-        );
     }
 }
