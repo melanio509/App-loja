@@ -199,4 +199,28 @@ public class StoreManager {
         return this.store.listActiveSubscriptions();
     }
 
+    public int getNumberOfClients() {
+        return this.store.getNumberOfClients();
+    }
+
+    public int getNumberOfProducts() {
+        return this.store.getNumberOfProducts();
+    }
+
+    public double getTotalSalesValue(int lastDays) {
+        return this.store.getTotalSalesValue(lastDays);
+    }
+
+    public double getTotalStockValue() {
+        return this.store.getTotalStockValue();
+    }
+
+    public int numberOfNotifications(boolean filter) {
+        return this.store.numberOfNotifications(filter);
+    }
+
+    public int numberOfActiveSubscriptions() {
+        return this.store.numberOfActiveSubscriptions();
+    }
+
 }

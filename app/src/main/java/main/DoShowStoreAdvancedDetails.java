@@ -35,7 +35,13 @@ public class DoShowStoreAdvancedDetails
     public void executar()
             throws DialogException {
 
-        // TODO: A completar pelos alunos
-
+        Message.storeAdvancedDetails(
+                this.getReceptor().getTotalSalesValue(10),
+                this.getReceptor().getTotalSalesValue(30),
+                this.getReceptor().getTotalSalesValue(60),
+                this.getReceptor().numberOfNotifications(true),
+                this.getReceptor().numberOfNotifications(false),
+                this.getReceptor().numberOfActiveSubscriptions()
+        );
     }
 }

@@ -32,7 +32,7 @@ public class DoOpenNotificationsMenu extends Comando<StoreManager> {
      */
     @Override
     public void executar() throws DialogException {
-        // TODO: A completar pelos alunos
+
         new Menu(this.getReceptor()).open();
     }
 }

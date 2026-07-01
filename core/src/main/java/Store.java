@@ -555,4 +555,68 @@ public class Store implements Serializable {
 
         return activeSubscriptions;
     }
+
+    public int getNumberOfClients() {
+        return this.clients.size();
+    }
+
+    public int getNumberOfProducts() {
+        return this.products.size();
+    }
+
+    public double getTotalSalesValue(int lastDays) {
+        double totalSalesValue = 0;
+
+        for (Sale sale : this.sales.values()) {
+            if (lastDays == 0 || !sale.getDate().isBefore(today.minusDays(lastDays))) {
+                totalSalesValue += sale.getTotal();
+            }
+        }
+
+        return totalSalesValue;
+    }
+
+    public double getTotalStockValue() {
+        double totalStockValue = 0;
+
+        for (Product product : this.products.values()) {
+            totalStockValue += product.getPrice() * product.getStock();
+        }
+
+        return totalStockValue;
+    }
+
+    public int numberOfNotifications(boolean filter) {
+
+        if (!filter) {
+            int numberOfNotifications = 0;
+            for (Notification n : this.notifications.values())
+                if (!n.isRead())
+                    numberOfNotifications++;
+            return numberOfNotifications;
+        }
+
+        return this.notifications.size();
+    }
+
+    public int numberOfActiveSubscriptions() {
+
+        int numberOfActiveSubscriptions = 0;
+
+        for (Subscription s : this.subscriptions)
+            if (s.getStatus() == SubscriptionStatus.ATIVA)
+                numberOfActiveSubscriptions++;
+
+        return numberOfActiveSubscriptions;
+    }
+
+
+
+    /*storeAdvancedDetails(
+            double totalSalesLast10Days,
+            double totalSalesLast30Days,
+            double totalSalesLast60Days,
+            int numberOfNotifications,
+            int numberOfUnreadNotifications,
+            int numberOfActiveSubscriptions*/
 }

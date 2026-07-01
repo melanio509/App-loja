@@ -33,7 +33,13 @@ public class DoShowStoreSummary
     public void executar()
             throws DialogException {
 
-        // TODO: A completar pelos alunos
+        Message.storeSummary(
+                this.getReceptor().getToday().toString(),
+                this.getReceptor().getNumberOfClients(),
+                this.getReceptor().getNumberOfProducts(),
+                this.getReceptor().getTotalSalesValue(0),
+                this.getReceptor().getTotalStockValue()
+        );
 
     }
 }
