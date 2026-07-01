@@ -1,9 +1,13 @@
 package atec.poo.loja.app.notifications;
 
+import atec.poo.loja.app.exceptions.AppNoNotificationsRegisteredException;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.exceptions.NoNotificationsRegisteredException;
+import atec.poo.loja.core.notifications.Notification;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +41,29 @@ public class DoListNotificationHistory
     public void executar()
             throws DialogException {
 
-        // TODO: A fazer pelos alunos
+        try {
+            ArrayList<Notification> notificationHistory = this.getReceptor().listNotificationHistory();
 
+            Message.notificationHistoryHeader(
+                    notificationHistory.size()
+            );
+
+            for (Notification n : notificationHistory) {
+                Message.notificationHistoryItem(
+                        n.getId(),
+                        n.getDate().toString(),
+                        n.getType().toString(),
+                        n.getClient().getName(),
+                        n.getClient().getId(),
+                        n.getProduct().getName(),
+                        n.getProduct().getId(),
+                        n.getPrice(),
+                        (n.isRead()) ? "READ" : "UNREAD"
+                );
+            }
+
+        } catch (NoNotificationsRegisteredException e) {
+            throw new AppNoNotificationsRegisteredException();
+        }
     }
 }

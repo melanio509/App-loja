@@ -1,9 +1,14 @@
 package atec.poo.loja.app.notifications;
 
+import atec.poo.loja.app.exceptions.AppNoSuchClientException;
 import atec.poo.loja.core.StoreManager;
+import atec.poo.loja.core.exceptions.NoSuchClientException;
+import atec.poo.loja.core.notifications.Notification;
+import atec.poo.loja.core.sales.Subscription;
 import atec.poo.ui.Comando;
 import atec.poo.ui.exceptions.DialogException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +42,44 @@ public class DoReadClientNotifications
     public void executar()
             throws DialogException {
 
-        // TODO: A fazer pelos alunos
+        int clientId = Prompt.clientId();
 
+        try {
+            ArrayList<Notification> notifications = this.getReceptor().readClientNotifications(clientId);
+            int size = (notifications.getFirst().getId() < 0) ? 0 : notifications.size();
+
+            Message.clientNotificationsHeader(
+                    clientId,
+                    notifications.getFirst().getClient().getName(),
+                    size
+            );
+
+            if(size > 0)
+                for (Notification n : notifications)
+                    Message.clientNotificationItem(
+                            n.getId(),
+                            n.getDate().toString(),
+                            n.getType().toString(),
+                            n.getProduct().getName(),
+                            n.getProduct().getId(),
+                            n.getPrice()
+                    );
+
+            if(Prompt.cancelActiveSubscriptions()) {
+                ArrayList<Subscription> cancelledSubscriptions =
+                        this.getReceptor().cancelActiveSubscriptions(clientId);
+                Message.clientSubscriptionsCancelled(
+                        clientId,
+                        cancelledSubscriptions.size()
+                );
+            } else {
+                Message.clientSubscriptionsMaintained(
+                        clientId
+                );
+            }
+
+        } catch (NoSuchClientException e) {
+            throw new AppNoSuchClientException(e.getId());
+        }
     }
 }

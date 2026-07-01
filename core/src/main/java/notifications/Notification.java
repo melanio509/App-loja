@@ -7,15 +7,6 @@ import java.time.LocalDate;
 
 public class Notification {
 
-    /*
-    Identificador único
-Data da notificação
-Tipo de alteração
-Cliente
-Produto
-Preço do produto nessa data
-Estado de leitura
-     */
     private int id;
     private LocalDate date;
     private NotificationType type;
@@ -32,5 +23,60 @@ Estado de leitura
         this.product = product;
         this.price = price;
         this.read = false;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public NotificationType getType() {
+        return type;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+    public Product getProduct() {
+        return product;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void markAsRead() {
+        this.read = true;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setType(NotificationType type) {
+        this.type = type;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }

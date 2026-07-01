@@ -45,21 +45,21 @@ public class DoSearchClients
 
         try {
             clients = this.getReceptor().searchClients(searchTerm);
+
+            Message.clientsListHeader(
+                    clients.size()
+            );
+
+            for (Client client: clients) {
+                Message.clientSearchItem(
+                        client.getId(),
+                        client.getName(),
+                        client.getNif(),
+                        client.getStatus().toString()
+                );
+            }
         } catch (NoClientsFoundException e) {
             throw new AppNoClientsFoundException(e.searchTerm());
-        }
-
-        Message.clientsListHeader(
-                clients.size()
-        );
-
-        for (Client client: clients) {
-            Message.clientSearchItem(
-                    client.getId(),
-                    client.getName(),
-                    client.getNif(),
-                    client.getStatus().toString()
-            );
         }
     }
 }

@@ -2,8 +2,11 @@ package atec.poo.loja.core;
 
 import atec.poo.loja.core.clients.Client;
 import atec.poo.loja.core.exceptions.*;
+import atec.poo.loja.core.notifications.Notification;
 import atec.poo.loja.core.products.Product;
 import atec.poo.loja.core.sales.Sale;
+import atec.poo.loja.core.sales.Subscription;
+import atec.poo.loja.core.sales.SubscriptionStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +14,7 @@ import java.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class StoreManager {
@@ -173,6 +177,26 @@ public class StoreManager {
 
     public ArrayList<Sale> listSales() throws NoSalesRegisteredException {
         return this.store.listSales();
+    }
+
+    public ArrayList<Sale> listSalesByClient(int clientId) throws NoClientSalesException, NoSuchClientException {
+        return this.store.listSalesByClient(clientId);
+    }
+
+    public ArrayList<Notification> readClientNotifications(int clientId) throws NoSuchClientException {
+        return this.store.readClientNotifications(clientId);
+    }
+
+    public ArrayList<Subscription> cancelActiveSubscriptions(int clientId) {
+        return this.store.cancelActiveSubscriptions(clientId);
+    }
+
+    public ArrayList<Notification> listNotificationHistory() throws NoNotificationsRegisteredException {
+        return this.store.listNotificationHistory();
+    }
+
+    public ArrayList<Subscription> listActiveSubscriptions() throws NoActiveSubscriptionsException {
+        return this.store.listActiveSubscriptions();
     }
 
 }

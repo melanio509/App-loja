@@ -3,6 +3,8 @@ package atec.poo.loja.core;
 import atec.poo.loja.core.clients.Client;
 import atec.poo.loja.core.clients.ClientStatus;
 import atec.poo.loja.core.exceptions.*;
+import atec.poo.loja.core.notifications.Notification;
+import atec.poo.loja.core.notifications.NotificationType;
 import atec.poo.loja.core.products.*;
 import atec.poo.loja.core.sales.Sale;
 import atec.poo.loja.core.sales.Subscription;
@@ -11,8 +13,6 @@ import atec.poo.loja.core.sales.SubscriptionStatus;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.Period;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,7 +41,6 @@ public class Store implements Serializable {
      */
     private LocalDate today;
 
-    //TODO: A IMPLEMENTAR. Restantes atributos da classe
     private int nextClientID;
     private HashMap<Integer, Client> clients;
 
@@ -52,6 +51,9 @@ public class Store implements Serializable {
     private HashMap<Integer, Sale> sales;
 
     private ArrayList<Subscription> subscriptions;
+
+    private int nextNotificationID;
+    private HashMap<Integer, Notification> notifications;
 
     /**
      * Cria uma nova loja com a data inicial definida pela aplicação.
@@ -68,7 +70,11 @@ public class Store implements Serializable {
 
         this.nextSaleID = 1;
         this.sales = new HashMap<>();
+
         this.subscriptions = new ArrayList<>();
+
+        this.nextNotificationID = 1;
+        this.notifications = new HashMap<>();
     }
 
     /**
@@ -79,7 +85,6 @@ public class Store implements Serializable {
     public LocalDate getToday() {
         return this.today;
     }
-
 
     /**
      * Avança a data simulada da aplicação.
@@ -303,7 +308,10 @@ public class Store implements Serializable {
             throw new InvalidProductPriceException(price);
         }
 
-        this.products.get(id).updatePrice(getToday(), price);
+        Product product = this.products.get(id);
+
+        product.updatePrice(getToday(), price);
+        notify(NotificationType.PRICE, product);
     }
 
     public ArrayList<Product> increaseCategoryPrices (int category, double percentageIncrease)
@@ -315,8 +323,10 @@ public class Store implements Serializable {
             throw new InvalidCategoryPriceIncreaseException(percentageIncrease);
         }
 
-        for (Product product : productsByCategoryIncreased)
+        for (Product product : productsByCategoryIncreased) {
             product.increasePrice(getToday(), percentageIncrease);
+            notify(NotificationType.PRICE, product);
+        }
 
         return productsByCategoryIncreased;
     }
@@ -326,7 +336,9 @@ public class Store implements Serializable {
             throw new InvalidProductStockQuantityException(quantity);
         }
 
-        this.products.get(id).updateStock(quantity);
+        Product product = this.products.get(id);
+        product.updateStock(quantity);
+        notify(NotificationType.INCREASE, product);
     }
 
     public void recalculateClientStatus(Client client) {
@@ -392,6 +404,7 @@ public class Store implements Serializable {
         Sale sale = new Sale(this.nextSaleID, getToday(), client, product, quantity);
 
         product.updateStock(-quantity);
+        notify(NotificationType.DECREASE, product);
         recalculateClientStatus(client);
 
         this.sales.put(sale.getId(), sale);
@@ -437,5 +450,109 @@ public class Store implements Serializable {
 
         Collections.sort(sales);
         return sales;
+    }
+
+    public ArrayList<Sale> listSalesByClient (int clientId)
+            throws NoSuchClientException, NoClientSalesException {
+
+        Client client = showClient(clientId);
+        ArrayList<Sale> salesByClient = new ArrayList<>();
+
+        for (Sale sale : this.sales.values())
+            if (sale.getClient().getId() == client.getId())
+                salesByClient.add(sale);
+
+        if(salesByClient.isEmpty())
+            throw new NoClientSalesException(client.getId(), client.getName());
+
+        Collections.sort(salesByClient);
+        return salesByClient;
+    }
+
+    public int registNotification (NotificationType type, Client client, Product product, double price) {
+
+        Notification notification = new Notification(this.nextNotificationID, today, type, client, product, price);
+
+        this.notifications.put(notification.getId(), notification);
+        this.nextNotificationID++;
+        return notification.getId();
+    }
+
+    private void notify(NotificationType type, Product product) {
+        for (Subscription subscription : subscriptions) {
+            if (subscription.getStatus() == SubscriptionStatus.ATIVA
+                    && subscription.getProduct().getId() == product.getId()) {
+                registNotification(
+                        type,
+                        subscription.getClient(),
+                        product,
+                        product.getPrice());
+            }
+        }
+    }
+
+    public ArrayList<Notification> readClientNotifications(int clientId) throws NoSuchClientException {
+
+        Client client = showClient(clientId);
+
+        ArrayList<Notification> clientNotifications = new ArrayList<>();
+
+        for (Notification n : this.notifications.values()) {
+            if (n.getClient().getId() == clientId && !n.isRead()) {
+                n.markAsRead();
+                clientNotifications.add(n);
+            }
+        }
+
+        if (clientNotifications.isEmpty())
+            clientNotifications.add(new Notification(-1, today, NotificationType.INCREASE, client, null, 0));
+        return clientNotifications;
+    }
+
+    public ArrayList<Subscription> cancelActiveSubscriptions(int clientId) {
+
+        ArrayList<Subscription> cancelledSubscriptions = new ArrayList<>();
+        for (Subscription s : this.subscriptions) {
+            if(s.getClient().getId() == clientId) {
+                s.setStatus(SubscriptionStatus.CANCELADA);
+                cancelledSubscriptions.add(s);
+            }
+        }
+
+        return cancelledSubscriptions;
+    }
+
+    public ArrayList<Notification> listNotificationHistory() throws NoNotificationsRegisteredException {
+
+        ArrayList<Notification> notificationHistory = new ArrayList<>(this.notifications.values());
+
+        if(notificationHistory.isEmpty())
+            throw new NoNotificationsRegisteredException();
+
+        notificationHistory.sort(
+                Comparator.comparing(Notification::getId)
+                        .reversed()
+        );
+
+        return notificationHistory;
+    }
+
+    public ArrayList<Subscription> listActiveSubscriptions() throws NoActiveSubscriptionsException {
+        ArrayList<Subscription> activeSubscriptions = new ArrayList<>();
+
+        for (Subscription s : this.subscriptions)
+            if (s.getStatus() == SubscriptionStatus.ATIVA)
+                activeSubscriptions.add(s);
+
+        if (activeSubscriptions.isEmpty())
+            throw new NoActiveSubscriptionsException();
+
+        activeSubscriptions.sort(Comparator
+                        .comparing(Subscription::getDate)
+                        .thenComparing(s -> s.getClient().getId())
+                        .thenComparing(s ->s.getProduct().getId())
+        );
+
+        return activeSubscriptions;
     }
 }

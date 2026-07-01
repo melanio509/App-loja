@@ -33,4 +33,8 @@ public class Subscription {
     public SubscriptionStatus getStatus() {
         return status;
     }
+
+    public void setStatus(SubscriptionStatus status) {
+        this.status = status;
+    }
 }

@@ -48,27 +48,26 @@ public class DoListProductsByCategory
 
         try {
             productsByCategory = this.getReceptor().listProductsByCategory(category);
+
+            Message.productsByCategoryListHeader(
+                    productsByCategory.get(0).getCategory().toString(),
+                    productsByCategory.size()
+            );
+
+            for (Product product : productsByCategory) {
+                Message.productsListItem(
+                        product.getId(),
+                        product.getName(),
+                        product.getCategory().getName(),
+                        product.getPrice(),
+                        product.getStock()
+                );
+
+            }
         } catch (NoProductsRegisteredException e) {
             throw new AppNoProductsRegisteredException();
         } catch (NoProductsInCategoryException e) {
             throw new AppNoProductsInCategoryException(e.getCategory());
         }
-
-        Message.productsByCategoryListHeader(
-                productsByCategory.get(0).getCategory().toString(),
-                productsByCategory.size()
-        );
-
-        for (Product product : productsByCategory) {
-            Message.productsListItem(
-                    product.getId(),
-                    product.getName(),
-                    product.getCategory().getName(),
-                    product.getPrice(),
-                    product.getStock()
-            );
-
-        }
-
     }
 }

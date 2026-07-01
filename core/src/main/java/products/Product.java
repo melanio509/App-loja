@@ -81,6 +81,7 @@ public abstract class Product implements Comparable<Product>{
         );
     }
 
+    @Override
     public int compareTo(Product p){
         if(this.name.equals(p.getName()))
             return this.id - p.getId();

@@ -48,24 +48,26 @@ public class DoSearchProducts
 
         try {
             products = this.getReceptor().searchProducts(searchTerm);
+
+            Message.productSearchHeader(
+                    searchTerm,
+                    products.size()
+            );
+
+            for (Product product: products) {
+                Message.productSearchItem(
+                        product.getId(),
+                        product.getName(),
+                        product.getCategory().getName(),
+                        product.getPrice(),
+                        product.getStock()
+                );
+            }
         } catch (NoProductsFoundException e) {
             throw new AppNoProductsFoundException(e.searchTerm());
         }
 
-        Message.productSearchHeader(
-                searchTerm,
-                products.size()
-        );
 
-        for (Product product: products) {
-            Message.productSearchItem(
-                    product.getId(),
-                    product.getName(),
-                    product.getCategory().getName(),
-                    product.getPrice(),
-                    product.getStock()
-            );
-        }
 
     }
 }

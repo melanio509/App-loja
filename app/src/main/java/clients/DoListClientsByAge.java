@@ -35,21 +35,21 @@ public class DoListClientsByAge extends Comando<StoreManager> {
 
         try {
             clients = this.getReceptor().listClientsByAge();
+
+            Message.clientsListHeader(
+                    clients.size()
+            );
+
+            for (Client client: clients) {
+                Message.clientsByAgeListItem(
+                        client.getId(),
+                        client.getName(),
+                        client.getAge(this.getReceptor().getToday()),
+                        client.getStatus().toString()
+                );
+            }
         } catch (NoClientsRegisteredException e) {
             throw new AppNoClientsRegisteredException();
-        }
-
-        Message.clientsListHeader(
-                clients.size()
-        );
-
-        for (Client client: clients) {
-            Message.clientsByAgeListItem(
-                    client.getId(),
-                    client.getName(),
-                    client.getAge(this.getReceptor().getToday()),
-                    client.getStatus().toString()
-            );
         }
     }
 }
