@@ -17,7 +17,7 @@ public class Food extends Product{
     }
 
     @Override
-    public boolean canBeSold() {
-        return !LocalDate.now().isAfter(expirationDate);
+    public boolean canBeSold(LocalDate today) {
+        return !today.isAfter(expirationDate);
     }
 }

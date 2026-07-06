@@ -393,7 +393,7 @@ public class Store implements Serializable {
             throw new InvalidSaleQuantityException(quantity);
         }
 
-        if(!product.canBeSold()) {
+        if(!product.canBeSold(today)) {
             throw new ProductCannotBeSoldException(product.getId());
         }
 
@@ -609,14 +609,4 @@ public class Store implements Serializable {
 
         return numberOfActiveSubscriptions;
     }
-
-
-
-    /*storeAdvancedDetails(
-            double totalSalesLast10Days,
-            double totalSalesLast30Days,
-            double totalSalesLast60Days,
-            int numberOfNotifications,
-            int numberOfUnreadNotifications,
-            int numberOfActiveSubscriptions*/
 }

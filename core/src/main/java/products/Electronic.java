@@ -17,7 +17,7 @@ public class Electronic extends Product{
     }
 
     @Override
-    public boolean canBeSold() {
+    public boolean canBeSold(LocalDate today) {
         return true;
     }
 }

@@ -39,7 +39,7 @@ public abstract class Product implements Comparable<Product>{
         updatePrice(today, newPrice);
     }
 
-    public abstract boolean canBeSold();
+    public abstract boolean canBeSold(LocalDate today);
 
     public int getId() {
         return id;

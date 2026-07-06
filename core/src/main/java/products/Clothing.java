@@ -15,5 +15,5 @@ public class Clothing extends Product{
     }
 
     @Override
-    public boolean canBeSold() { return true; }
+    public boolean canBeSold(LocalDate today) { return true; }
 }
